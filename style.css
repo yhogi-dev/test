@@ -36,3 +36,7 @@ a {
   background-color: #28a745;
   color: white;
 }
+
+canvas, audio {
+  margin-top: 20px;
+}
