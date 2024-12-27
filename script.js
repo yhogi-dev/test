@@ -12,29 +12,50 @@ function handleFileUpload(event) {
   reader.onload = function (e) {
     fileBuffer = new Uint8Array(e.target.result);
     fileType = file.type;
+
+    enableCorruptionOptions();
     document.getElementById("corruptButton").disabled = false;
   };
   reader.readAsArrayBuffer(file);
 }
 
+function enableCorruptionOptions() {
+  const corruptionOptions = document.getElementsByName("corruptionType");
+  corruptionOptions.forEach(option => {
+    option.disabled = false;
+  });
+}
+
+function getSelectedCorruptionType() {
+  const corruptionOptions = document.getElementsByName("corruptionType");
+  for (const option of corruptionOptions) {
+    if (option.checked) return option.value;
+  }
+  return null;
+}
+
 function corruptFile() {
   if (!fileBuffer) return;
 
+  const corruptionType = getSelectedCorruptionType();
   const glitchStrength = parseInt(document.getElementById("glitchStrength").value, 10);
   const corruptedBuffer = new Uint8Array(fileBuffer);
 
-  // Corrupt based on file type
-  if (fileType.startsWith("image/")) {
-    corruptBinaryData(corruptedBuffer, glitchStrength);
-    displayImage(corruptedBuffer);
-    downloadCorruptedFile(corruptedBuffer, "corrupted-image.png");
-  } else if (fileType.startsWith("audio/")) {
-    corruptAudioData(corruptedBuffer, glitchStrength);
-    displayAudio(corruptedBuffer);
-    downloadCorruptedFile(corruptedBuffer, "corrupted-audio.wav");
-  } else {
-    corruptBinaryData(corruptedBuffer, glitchStrength);
-    downloadCorruptedFile(corruptedBuffer, "corrupted-file.bin");
+  switch (corruptionType) {
+    case "image":
+      corruptBinaryData(corruptedBuffer, glitchStrength);
+      displayImage(corruptedBuffer);
+      downloadCorruptedFile(corruptedBuffer, "corrupted-image.png");
+      break;
+    case "audio":
+      corruptAudioData(corruptedBuffer, glitchStrength);
+      break;
+    case "file":
+      corruptBinaryData(corruptedBuffer, glitchStrength);
+      downloadCorruptedFile(corruptedBuffer, "corrupted-file.bin");
+      break;
+    default:
+      alert("Please select a corruption type.");
   }
 }
 
