@@ -9,10 +9,19 @@
 <body>
   <div class="container">
     <h1>File Corruptor</h1>
-    <p>Upload an image, sound, or file to glitch it!</p>
+    <p>Upload a file and choose how to corrupt it!</p>
     <input type="file" id="fileInput" webkitdirectory>
+    
+    <h2>Choose Corruption Options</h2>
+    <div class="corruption-options">
+      <label><input type="radio" name="corruptionType" value="image" disabled> Image Corruption</label>
+      <label><input type="radio" name="corruptionType" value="audio" disabled> Audio Corruption</label>
+      <label><input type="radio" name="corruptionType" value="file" disabled> File Corruption</label>
+    </div>
+    
     <label for="glitchStrength">Glitch Strength (1-100):</label>
     <input type="number" id="glitchStrength" min="1" max="100" value="10">
+    
     <button id="corruptButton" disabled>Corrupt File</button>
     <div id="outputContainer">
       <canvas id="imageDisplay" style="display: none;"></canvas>
