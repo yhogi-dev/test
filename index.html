@@ -1,102 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screen Capture and Swirl</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
-        }
-        canvas {
-            display: block;
-            max-width: 100%;
-            max-height: 100%;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Corruptor</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="captureButton" style="position: absolute; z-index: 1;">Capture Screen</button>
-    <canvas id="screenshotCanvas"></canvas>
-
-    <script>
-        const button = document.getElementById('captureButton');
-        const canvas = document.getElementById('screenshotCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function swirlEffect(imageData, centerX, centerY, strength) {
-            const { width, height } = imageData;
-            const src = imageData.data;
-            const output = new Uint8ClampedArray(src);
-
-            for (let y = 0; y < height; y++) {
-                for (let x = 0; x < width; x++) {
-                    const dx = x - centerX;
-                    const dy = y - centerY;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const angle = strength * distance / 100;
-
-                    const srcX = Math.cos(angle) * dx - Math.sin(angle) * dy + centerX;
-                    const srcY = Math.sin(angle) * dx + Math.cos(angle) * dy + centerY;
-
-                    const srcIndex = ((Math.round(srcY) * width) + Math.round(srcX)) * 4;
-                    const destIndex = (y * width + x) * 4;
-
-                    if (srcX >= 0 && srcX < width && srcY >= 0 && srcY < height) {
-                        output[destIndex] = src[srcIndex];
-                        output[destIndex + 1] = src[srcIndex + 1];
-                        output[destIndex + 2] = src[srcIndex + 2];
-                        output[destIndex + 3] = src[srcIndex + 3];
-                    } else {
-                        output[destIndex] = 0;
-                        output[destIndex + 1] = 0;
-                        output[destIndex + 2] = 0;
-                        output[destIndex + 3] = 255; // Transparent background
-                    }
-                }
-            }
-
-            imageData.data.set(output);
-            return imageData;
-        }
-
-        button.addEventListener('click', async () => {
-            try {
-                // Request a screen capture
-                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-                const video = document.createElement('video');
-
-                video.srcObject = stream;
-                await video.play();
-
-                // Set canvas size to match screen
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-
-                // Draw the video frame to the canvas
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                // Stop all tracks in the stream
-                stream.getTracks().forEach(track => track.stop());
-
-                // Apply the swirl effect
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
-                const strength = 5; // Adjust the strength of the swirl
-
-                const swirledImage = swirlEffect(imageData, centerX, centerY, strength);
-                ctx.putImageData(swirledImage, 0, 0);
-            } catch (err) {
-                console.error('Error capturing screen:', err);
-            }
-        });
-    </script>
+  <div class="container">
+    <h1>Image Corruptor</h1>
+    <p>Upload an image, and we’ll corrupt it for you!</p>
+    <input type="file" id="imageInput" accept="image/*">
+    <button id="corruptButton" disabled>Corrupt Image</button>
+    <a id="downloadLink" style="display: none;" download="corrupted-image.png">Download Corrupted Image</a>
+    <canvas id="canvas" style="display: none;"></canvas>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
