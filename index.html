@@ -3,17 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Corruptor</title>
+  <title>File Corruptor</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Image Corruptor</h1>
-    <p>Upload an image, and we’ll corrupt it for you!</p>
-    <input type="file" id="imageInput" accept="image/*">
-    <button id="corruptButton" disabled>Corrupt Image</button>
-    <a id="downloadLink" style="display: none;" download="corrupted-image.png">Download Corrupted Image</a>
-    <canvas id="canvas" style="display: none;"></canvas>
+    <h1>File Corruptor</h1>
+    <p>Upload an image, sound, or file to glitch it!</p>
+    <input type="file" id="fileInput" webkitdirectory>
+    <label for="glitchStrength">Glitch Strength (1-100):</label>
+    <input type="number" id="glitchStrength" min="1" max="100" value="10">
+    <button id="corruptButton" disabled>Corrupt File</button>
+    <div id="outputContainer">
+      <canvas id="imageDisplay" style="display: none;"></canvas>
+      <audio id="audioDisplay" controls style="display: none;"></audio>
+    </div>
+    <a id="downloadLink" style="display: none;" download>Download Corrupted File</a>
   </div>
   <script src="script.js"></script>
 </body>
